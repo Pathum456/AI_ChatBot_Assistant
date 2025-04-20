@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f7f7f7, #e9ecef);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Chat Container */
+        #chat-container {
+            width: 90%;
+            max-width: 450px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        /* Header */
+        h2 {
+            margin: 0;
+            padding: 15px;
+            text-align: center;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            font-size: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Chat Box */
+        #chat-box {
+            height: 400px; /* Reduced height to accommodate loading dots */
+            overflow-y: auto;
+            padding: 15px;
+            background: #fafafa;
+            scrollbar-width: thin;
+            scrollbar-color: #ddd transparent;
+        }
+
+        #chat-box::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #chat-box::-webkit-scrollbar-thumb {
+            background: #ddd;
+            border-radius: 10px;
+        }
+
+        /* Messages */
+        .message {
+            margin: 10px 0;
+            padding: 12px 15px;
+            border-radius: 15px;
+            max-width: 80%;
+            word-wrap: break-word;
+            position: relative;
+            animation: fadeInMessage 0.5s ease-in;
+        }
+
+        .user {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            align-self: flex-end;
+            text-align: right;
+            float: right;
+            clear: both;
+            box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3);
+        }
+
+        .bot {
+            background: #f0f0f0;
+            color: #333;
+            align-self: flex-start;
+            text-align: left;
+            float: left;
+            clear: both;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes fadeInMessage {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Input Container */
+        #input-container {
+            position: relative; /* Required for absolute positioning of loading dots */
+            /* display: flex; */
+            gap: 10px;
+            padding: 10px;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            height: auto; /* Fixed height */
+        }
+
+        #user-input {
+            flex-grow: 1; /* Ensures input field takes up remaining space */
+            padding: 12px;
+            border: none;
+            border-radius: 15px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #user-input:focus {
+            outline: none;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+        }
+
+        #send-btn {
+            padding: 12px;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #send-btn:hover {
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.5);
+        }
+
+        /* Ripple Effect for Send Button */
+        #send-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.5s ease;
+        }
+
+        #send-btn:active::after {
+            width: 150px;
+            height: 150px;
+            opacity: 0;
+        }
+
+        /* Shake Animation for Input Field */
+        #user-input.shake {
+            animation: shake 0.3s ease-in-out;
+        }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+
+        /* Loading Dots */
+        .loading-dots {
+            display: none; /* Hidden by default */
+            position: absolute; /* Positioned absolutely within #input-container */
+            bottom: 100%; /* Placed above the input field */
+            left: 50%; /* Horizontally centered */
+            transform: translateX(-50%); /* Center alignment */
+            gap: 5px;
+            justify-content: center;
+            margin-bottom: 10px; /* Space between dots and input field */
+        }
+
+        .loading-dot {
+            width: 8px;
+            height: 8px;
+            background: #4CAF50;
+            border-radius: 50%;
+            animation: bounceDot 0.6s infinite alternate;
+        }
+
+        .loading-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .loading-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes bounceDot {
+            from { transform: translateY(0); }
+            to { transform: translateY(-10px); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            #chat-container {
+                width: 95%;
+            }
+
+            h2 {
+                font-size: 1.2rem;
+            }
+
+            #user-input, #send-btn {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="chat-container">
+        <h2>Chatbot</h2>
+        <div id="chat-box"></div>
+        <div id="input-container">
+            <!-- Loading Dots -->
+            <div class="loading-dots">
+                <div class="loading-dot"></div>
+                <div class="loading-dot"></div>
+                <div class="loading-dot"></div>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="user-input" placeholder="Type a message..." />
+                <button id="send-btn">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+         document.getElementById("user-input").focus
+
+        // Typewriter Effect
+        function typeWriterEffect(element, text, delay = 50) {
+            let i = 0;
+            const interval = setInterval(() => {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                } else {
+                    clearInterval(interval);
+                }
+            }, delay);
+        }
+
+        // Event Listener for Send Button and Enter Key
+        document.getElementById("send-btn").addEventListener("click", sendMessage);
+        document.getElementById("user-input").addEventListener("keyup", function(event) {
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+        });
+
+        function sendMessage() {
+            let userInput = document.getElementById("user-input").value.trim();
+            if (userInput === "") {
+                // Shake the input field
+                const inputField = document.getElementById("user-input");
+                inputField.classList.add("shake");
+                setTimeout(() => inputField.classList.remove("shake"), 300);
+                return;
+            }
+
+            // Display User Message
+            let chatBox = document.getElementById("chat-box");
+            chatBox.innerHTML += `<div class='message user'>${userInput}</div>`;
+            document.getElementById("user-input").value = ""; // Clear Input
+
+            // Scroll to Bottom
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // Show Loading Dots
+            const loadingDots = document.querySelector(".loading-dots");
+            loadingDots.style.display = "flex";
+
+            // Simulate Fetching Response
+            fetch("http://127.0.0.1:5000/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: userInput })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Remove Loading Dots
+                loadingDots.style.display = "none";
+
+                // Display Bot Response
+                const botResponseDiv = document.createElement("div");
+                botResponseDiv.className = "message bot";
+                chatBox.appendChild(botResponseDiv);
+
+                // Typewriter Effect for Bot Response
+                typeWriterEffect(botResponseDiv, data.response);
+
+                // Scroll to Bottom
+                chatBox.scrollTop = chatBox.scrollHeight;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                loadingDots.style.display = "none";
+                chatBox.innerHTML += `<div class='message bot'>Sorry, I encountered an error.</div>`;
+            });
+        }
+    </script>
+</body>
+</html>
