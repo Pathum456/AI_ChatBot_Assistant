@@ -56,7 +56,7 @@ def train():
     output_size = len(tags)
     batch_size = 4
     learning_rate = 0.001
-    num_epochs = 2000
+    num_epochs = 3000
 
     # Create dataset and dataloader
     dataset = ChatDataset(X_train, y_train)

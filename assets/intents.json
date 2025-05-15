@@ -5939,6 +5939,449 @@
                 "Go to the beach"
             ],
             "context_set": ""
-        }
+        },
+        {
+            "tag": "happy",
+            "patterns": ["😄", "😂", "😁", "🤩", "so happy", "feeling good"],
+            "responses": [
+                "Looks like you're having a great day! 😊",
+                "That's awesome to hear!",
+                "Keep that positive energy going!"
+            ],
+            "context_set": "user_happiness"
+        },
+        {
+            "tag": "sad",
+            "patterns": ["😢", "😞", "😪", "feeling down", "not okay"],
+            "responses": [
+                "I'm sorry to hear that. Would you like to talk about it?",
+                "Take care and reach out if you need someone to chat with.",
+                "It's okay to feel low sometimes. Hope things look up soon."
+            ],
+            "context_set": "emotional_support"
+        },
+        {
+            "tag": "angry",
+            "patterns": ["😡", "💢", "so mad", "angry", "furious"],
+            "responses": [
+                "Whoa, sounds like something really upset you.",
+                "Take a deep breath. Want to tell me what happened?",
+                "Sometimes venting helps. I'm here if you need to talk."
+            ],
+            "context_set": "emotional_support"
+        },
+        {
+            "tag": "love",
+            "patterns": ["❤️", "💕", "💖", "love", "romantic"],
+            "responses": [
+                "Aww, love is in the air 💕",
+                "So sweet!",
+                "Love always brings a smile to my circuits 😄"
+            ],
+            "context_set": "positive_emotions"
+        },
+        {
+            "tag": "approve",
+            "patterns": ["✅", "👍", "✔️", "yes", "okay", "agree"],
+            "responses": [
+                "Got it! All set 👍",
+                "Understood — thank you!",
+                "You're all caught up ✅"
+            ],
+            "context_set": "confirmation_received"
+        },
+        
+            {
+              "tag": "happy",
+              "patterns": ["😄", "😂", "😁", "🤩", "so happy", "feeling good", "great day"],
+              "responses": [
+                "Looks like you're having a great day! 😊",
+                "That's awesome to hear!",
+                "Keep that positive energy going!"
+              ],
+              "context_set": "user_happiness"
+            },
+            {
+              "tag": "sad",
+              "patterns": ["😢", "😞", "😪", "feeling down", "not okay", "low mood"],
+              "responses": [
+                "I'm sorry to hear that. Would you like to talk about it?",
+                "Take care and reach out if you need someone to chat with.",
+                "It's okay to feel low sometimes. Hope things look up soon."
+              ],
+              "context_set": "emotional_support"
+            },
+            {
+              "tag": "angry",
+              "patterns": ["😡", "💢", "so mad", "angry", "furious", "pissed off"],
+              "responses": [
+                "Whoa, sounds like something really upset you.",
+                "Take a deep breath. Want to tell me what happened?",
+                "Sometimes venting helps. I'm here if you need to talk."
+              ],
+              "context_set": "emotional_support"
+            },
+            {
+              "tag": "love",
+              "patterns": ["❤️", "💕", "💖", "love", "romantic", "crush", "soulmate"],
+              "responses": [
+                "Aww, love is in the air 💕",
+                "So sweet!",
+                "Love always brings a smile to my circuits 😄"
+              ],
+              "context_set": "positive_emotions"
+            },
+            {
+              "tag": "approve",
+              "patterns": ["✅", "👍", "✔️", "yes", "okay", "agree", "good"],
+              "responses": [
+                "Got it! All set 👍",
+                "Understood — thank you!",
+                "You're all caught up ✅"
+              ],
+              "context_set": "confirmation_received"
+            },
+            {
+              "tag": "disapprove",
+              "patterns": ["❌", "👎", "no", "not okay", "reject", "disagree"],
+              "responses": [
+                "Alright, noted.",
+                "No problem — let me know how else I can help.",
+                "Okay, we'll go with your decision."
+              ],
+              "context_set": "rejection_understood"
+            },
+            {
+              "tag": "impressed",
+              "patterns": ["🔥", "💯", "😎", "cool", "awesome", "on fire", "lit"],
+              "responses": [
+                "Wow, looks like you're really impressed!",
+                "Glad you liked it 🤩",
+                "High fives all around! 🖐️"
+              ],
+              "context_set": "positive_feedback"
+            },
+            {
+              "tag": "confused",
+              "patterns": ["🤔", "🙄", "what?", "huh?", "confused", "don't get it"],
+              "responses": [
+                "Hmm, maybe I didn’t catch that right.",
+                "Can you rephrase that so I understand better?",
+                "Let’s break this down together."
+              ],
+              "context_set": "clarification_needed"
+            },
+            {
+              "tag": "celebrate",
+              "patterns": ["🎉", "🎊", "🎈", "party", "yay", "hooray", "congrats"],
+              "responses": [
+                "Time to celebrate! 🎉",
+                "Yay! That’s something worth cheering about!",
+                "Let’s throw confetti in your honor 🎊"
+              ],
+              "context_set": "joyful_moment"
+            },
+            {
+              "tag": "laughing",
+              "patterns": ["🤣", "😂", "lmfao", "rofl", "funny", "crack me up"],
+              "responses": [
+                "LOL! You’re making me laugh too 😂",
+                "What’s so funny? Share the joy!",
+                "Laughter is contagious — keep it coming!"
+              ],
+              "context_set": "humor_mode"
+            },
+            {
+              "tag": "neutral",
+              "patterns": ["🙂", "😐", "meh", "nothing special", "fine", "okay"],
+              "responses": [
+                "Seems like a calm day 😌",
+                "All good on your end?",
+                "You seem balanced today!"
+              ],
+              "context_set": "neutral_state"
+            },
+            {
+              "tag": "tired",
+              "patterns": ["😴", "🥱", "zzz", "sleepy", "exhausted", "can't focus"],
+              "responses": [
+                "Looks like you could use some rest 😴",
+                "Try to get some sleep when you can.",
+                "We all have tired days — take care!"
+              ],
+              "context_set": "fatigue_detected"
+            },
+            {
+              "tag": "sick",
+              "patterns": ["🤢", "🤒", "vomit", "ill", "fever", "headache"],
+              "responses": [
+                "Hope you're feeling better soon 🤒",
+                "Take care of yourself and rest well.",
+                "If you need anything, just let me know."
+              ],
+              "context_set": "health_check_in"
+            },
+            {
+              "tag": "warning",
+              "patterns": ["⚠️", "❗", "danger", "caution", "alert", "watch out"],
+              "responses": [
+                "Heads up — something needs attention ⚠️",
+                "Proceed with caution!",
+                "There might be an issue ahead."
+              ],
+              "context_set": "system_alert"
+            },
+            {
+              "tag": "info",
+              "patterns": ["ℹ️", "❓", "help", "explain", "tell me more", "what is"],
+              "responses": [
+                "Let me give you some details!",
+                "Ask away — I’m here to help.",
+                "Need some info? I got you covered."
+              ],
+              "context_set": "information_requested"
+            },
+            {
+                "tag": "symbol_&",
+                "patterns": ["&", "what is ampersand", "meaning of &", "what does & mean"],
+                "responses": ["Used as 'and'. Example: bread & butter → bread and butter"],
+                "context_set": ""
+              },
+              {
+                "tag": "symbol_@",
+                "patterns": ["@", "what is at sign", "meaning of @", "what does @ mean"],
+                "responses": ["Used for tagging people or emails. Example: Hello @John → Mentioning John"],
+                "context_set": ""
+              },
+              {
+                "tag": "symbol_#",
+                "patterns": ["#", "what is hashtag", "meaning of #", "what does # mean"],
+                "responses": ["Used for categorizing topics. Example: #AI → Topic tag for Artificial Intelligence"],
+                "context_set": ""
+              },
+              {
+                "tag": "symbol_+",
+                "patterns": ["+", "what is plus", "meaning of +", "what does + mean"],
+                "responses": ["Math operator or extra addition. Example: 2 + 2 = 4 or User+Admin"],
+                "context_set": ""
+              },
+              {
+                "tag": "symbol_-",
+                "patterns": ["-", "what is dash", "meaning of -", "what does - mean"],
+                "responses": ["Math operator or separator. Example: 5 - 2 = 3 or high-end-product"],
+                "context_set": ""
+              },
+              {
+                "tag": "symbol_*",
+                "patterns": ["*", "what is asterisk", "meaning of *", "what does * mean"],
+                "responses": ["Math operator or placeholder. Example: 3 * 4 = 12 or *.com"],
+                "context_set": ""
+              },
+              {
+                "tag": "symbol_=",
+                "patterns": ["=", "what is equal", "meaning of =", "what does = mean"],
+                "responses": ["Equal value or assignment. Example: x = 5 or 2+2 = 4"],
+                "context_set": ""
+              },
+              {
+                "tag": "symbol_!",
+                "patterns": ["!", "what is exclamation mark", "meaning of !", "what does ! mean"],
+                "responses": ["Emphasis or logical NOT. Example: Wow! or if (!valid)"],
+                "context_set": ""
+              },
+              {
+                "tag": "symbol_?",
+                "patterns": ["?", "what is question mark", "meaning of ?", "what does ? mean"],
+                "responses": ["Used to ask something. Example: What time?"],
+                "context_set": ""
+              },
+              {
+                "tag": "symbol_:",
+                "patterns": [":", "what is colon", "meaning of :", "what does : mean"],
+                "responses": ["Separator for key-value or ratio. Example: username:password or 16:9"],
+                "context_set": ""
+              },
+              {
+                "tag": "symbol_;",
+                "patterns": [";", "what is semicolon", "meaning of ;", "what does ; mean"],
+                "responses": ["Separates code lines or clauses. Example: for(i=0;i<5;i++);"],
+                "context_set": ""
+              },
+              {
+                "tag": "symbol_{}",
+                "patterns": ["{}", "what is curly braces", "meaning of {}", "what does {} mean"],
+                "responses": ["Used in programming for blocks. Example: if(condition) { doSomething(); }"],
+                "context_set": ""
+              },
+              {
+                "tag": "symbol_[]",
+                "patterns": ["[]", "what is square brackets", "meaning of []", "what does [] mean"],
+                "responses": ["Used for arrays or lists. Example: array[0] = 5;"],
+                "context_set": ""
+              },
+              {
+                "tag": "symbol_()",
+                "patterns": ["()", "what is parentheses", "meaning of ()", "what does () mean"],
+                "responses": ["Used for grouping or function calls. Example: (x + y) or func()"],
+                "context_set": ""
+              },
+              {
+                "tag": "symbol_<>",
+                "patterns": ["<>", "what is angle brackets", "meaning of <>", "what does <> mean"],
+                "responses": ["Used in HTML tags or comparisons. Example: <div></div> or x < y"],
+                "context_set": ""
+              },
+                {
+                    "tag": "symbol_~",
+                    "patterns": ["~", "what is tilde", "meaning of ~", "what does ~ mean"],
+                    "responses": ["Used for approximation or bitwise NOT. Example: ~x"],
+                    "context_set": ""
+                },
+                {
+                    "tag": "symbol_`",
+                    "patterns": ["`", "what is backtick", "meaning of `", "what does ` mean"],
+                    "responses": ["Used for code snippets or template literals. Example: `Hello ${name}`"],
+                    "context_set": ""
+                },
+                {
+                    "tag": "symbol_|",
+                    "patterns": ["|", "what is pipe", "meaning of |", "what does | mean"],
+                    "responses": ["Used for logical OR or piping commands. Example: A | B or command1 | command2"],
+                    "context_set": ""
+                },
+                {
+                    "tag": "symbol_\\",
+                    "patterns": ["\\", "what is backslash", "meaning of \\", "what does \\ mean"],
+                    "responses": ["Used for escaping characters. Example: \\n for newline"],
+                    "context_set": ""
+                },
+                {
+                    "tag": "symbol_^",
+                    "patterns": ["^", "what is caret", "meaning of ^", "what does ^ mean"],
+                    "responses": ["Used for exponentiation or bitwise XOR. Example: 2^3 = 8 or x ^ y"],
+                    "context_set": ""
+                },
+                {
+                    "tag": "$",
+                    "patterns": ["$", "what is dollar sign", "meaning of $", "what does $ mean"],
+                    "responses": ["Used for currency or variable in programming. Example: $100 or $variable"],
+                    "context_set": ""
+                },
+                {
+                    "tag": "symbol_@",
+                    "patterns": ["@", "what is at sign", "meaning of @", "what does @ mean"],
+                    "responses": ["Used for tagging people or emails. Example: Hello @John"],
+                    "context_set": ""
+                },
+                {
+                    "tag": "symbol_&",
+                    "patterns": ["&", "what is ampersand", "meaning of &", "what does & mean"],
+                    "responses": ["Used as 'and'. Example: bread & butter"],
+                    "context_set": ""
+                },
+                {
+                    "tag": "symbol_#",
+                    "patterns": ["#", "what is hashtag", "meaning of #", "what does # mean"],
+                    "responses": ["Used for categorizing topics. Example: #AI"],
+                    "context_set": ""
+                },
+                {
+                    "tag": "symbol_+",
+                    "patterns": ["+", "what is plus", "meaning of +", "what does + mean"],
+                    "responses": ["Math operator or extra addition. Example: 2 + 2 = 4"],
+                    "context_set": ""
+                },
+                {
+                    "tag": "symbol_-",
+                    "patterns": ["-", "what is dash", "meaning of -", "what does - mean"],
+                    "responses": ["Math operator or separator. Example: 5 - 2 = 3"],
+                    "context_set": ""
+                },
+                {
+                    "tag": "symbol_*",
+                    "patterns": ["*", "what is asterisk", "meaning of *", "what does * mean"],
+                    "responses": ["Math operator or placeholder. Example: 3 * 4 = 12"],
+                    "context_set": ""
+                },
+                {
+                    "tag": "symbol_=",
+                    "patterns": ["=", "what is equal", "meaning of =", "what does = mean"],
+                    "responses": ["Equal value or assignment. Example: x = 5"],
+                    "context_set": ""
+                },
+                {
+                    "tag": "!",
+                    "patterns": ["!", "what is exclamation mark", "meaning of !", "what does ! mean"],
+                    "responses": ["Emphasis or logical NOT. Example: Wow!"],
+                    "context_set": ""
+                },
+                {
+                    "tag": "?",
+                    "patterns": ["?", "what is question mark", "meaning of ?", "what does ? mean"],
+                    "responses": ["Used to ask something. Example: What time?"],
+                    "context_set": ""
+                },
+                {
+                    "tag": ":",
+                    "patterns": [":", "what is colon", "meaning of :", "what does : mean"],
+                    "responses": ["Separator for key-value or ratio. Example: username:password"],
+                    "context_set": ""
+                },
+                {
+                    "tag": ";",
+                    "patterns": [";", "what is semicolon", "meaning of ;", "what does ; mean"],
+                    "responses": ["Separates code lines or clauses. Example: for(i=0;i<5;i++);"],
+                    "context_set": ""
+                },
+                {
+                    "tag": "{}",
+                    "patterns": ["{}", "what is curly braces", "meaning of {}", "what does {} mean"],
+                    "responses": ["Used in programming for blocks. Example: if(condition) { doSomething(); }"],
+                    "context_set": ""
+                },
+                {
+                    "tag": "()",
+                    "patterns": ["()", "what is parentheses", "meaning of ()", "what does () mean"],
+                    "responses": ["Used for grouping or function calls. Example: (x + y) or func()"],
+                    "context_set": ""
+                },
+                {
+                    "tag": "<>",
+                    "patterns": ["<>", "what is angle brackets", "meaning of <>", "what does <> mean"],
+                    "responses": ["Used in HTML tags or comparisons. Example: <div></div> or x < y"],
+                    "context_set": ""
+                },
+                {
+                    "tag": "~",
+                    "patterns": ["~", "what is tilde", "meaning of ~", "what does ~ mean"],
+                    "responses": ["Used for approximation or bitwise NOT. Example: ~x"],
+                    "context_set": ""
+                },
+                {
+                    "tag": "`",
+                    "patterns": ["`", "what is backtick", "meaning of `", "what does ` mean"],
+                    "responses": ["Used for code snippets or template literals. Example: `Hello ${name}`"],
+                    "context_set": ""
+                },
+                {
+                    "tag": "|",
+                    "patterns": ["|", "what is pipe", "meaning of |", "what does | mean"],
+                    "responses": ["Used for logical OR or piping commands. Example: A | B"],
+                    "context_set": ""
+                },
+                {
+                    "tag": "\\",
+                    "patterns": ["\\", "what is backslash", "meaning of \\", "what does \\ mean"],
+                    "responses": ["Used for escaping characters. Example: \\n for newline"],
+                    "context_set": ""
+                },
+                {
+                    "tag": "^",
+                    "patterns": ["^", "what is caret", "meaning of ^", "what does ^ mean"],
+                    "responses": ["Used for exponentiation or bitwise XOR. Example: 2^3 = 8"],
+                    "context_set": ""
+                }
     ]
+    
 }
+

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Chatbot Admin Panel</title>
+  <style>
+    :root {
+      --primary: #6e8efb;
+      --secondary: #a777e3;
+      --accent: #4ade80;
+      --danger: #ff6b6b;
+      --bg-light: #f9f9f9;
+      --text-dark: #2d3748;
+      --border-radius: 12px;
+      --shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      color: var(--text-dark);
+    }
+
+    .admin-panel {
+      max-width: 1200px;
+      margin: auto;
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      padding: 20px;
+    }
+
+    h2, h3 {
+      margin-top: 0;
+      font-size: 1.5rem;
+      color: var(--primary);
+    }
+
+    .form-container {
+      display: grid;
+      gap: 15px;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      font-weight: bold;
+      margin-bottom: 5px;
+      font-size: 0.9rem;
+    }
+
+    input[type="text"],
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: var(--border-radius);
+      resize: vertical;
+      font-size: 14px;
+    }
+
+    textarea {
+      height: 100px;
+    }
+
+    .form-actions {
+      margin-top: 10px;
+      display: flex;
+      gap: 10px;
+    }
+
+    button {
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      color: white;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 25px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .danger {
+      background-color: var(--danger);
+    }
+
+    .danger:hover {
+      background-color: #e63946;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: left;
+    }
+
+    th {
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      color: white;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .action-buttons button {
+      font-size: 16px;
+      padding: 6px 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="admin-panel">
+  <h2>🗨️ Chatbot Admin Panel</h2>
+
+  <!-- Add/Edit Question Form -->
+  <div>
+    <h3>➕ Add / ✏️ Edit Question</h3>
+    <input type="hidden" id="edit-id" />
+
+    <div class="form-container">
+      <div class="form-group">
+        <label for="tag">Tag (e.g., greeting)</label>
+        <input type="text" id="tag" placeholder="e.g., greeting" />
+      </div>
+
+      <div class="form-group">
+        <label for="pattern">User Question</label>
+        <input type="text" id="pattern" placeholder="What's your name?" />
+      </div>
+
+      <div class="form-group">
+        <label for="context">Context Set (Optional)</label>
+        <input type="text" id="context" placeholder="Leave blank if not needed" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="response">Bot Answer</label>
+      <textarea id="response" placeholder="Type your bot response here..."></textarea>
+    </div>
+
+    <div class="form-actions">
+      <button onclick="saveQuestion()">💾 Save</button>
+      <button class="danger" onclick="clearForm()">🧹 Clear</button>
+    </div>
+  </div>
+
+  <!-- Questions Table -->
+  <h3>📋 Questions List</h3>
+  <table id="questions-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Tag</th>
+        <th>User Question</th>
+        <th>Bot Response</th>
+        <th>Status</th>
+        <th>Context</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <button onclick="submitAll()">📤 Submit All Changes</button>
+</div>
+
+<script>
+  let questions = [];
+
+  async function loadQuestions() {
+    const res = await fetch('http://localhost:5000/api/questions');
+    questions = await res.json();
+    renderTable();
+  }
+
+  function renderTable() {
+    const tbody = document.querySelector("#questions-table tbody");
+    tbody.innerHTML = "";
+    questions.forEach(q => {
+      const tr = document.createElement("tr");
+
+      tr.innerHTML = `
+        <td>${q.id}</td>
+        <td>${q.tag}</td>
+        <td>${q.pattern}</td>
+        <td>${q.responses || "-"}</td>
+        <td>${q.responses ? "✅" : "⏳"}</td>
+        <td>${q.context_set || "-"}</td>
+        <td class="action-buttons">
+          <button onclick="editQuestion(${q.id})">✏️</button>
+          <button class="danger" onclick="deleteQuestion(${q.id})">🗑️</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function editQuestion(id) {
+    const q = questions.find(x => x.id == id);
+    if (!q) return;
+
+    document.getElementById("edit-id").value = q.id;
+    document.getElementById("tag").value = q.tag;
+    document.getElementById("pattern").value = q.pattern;
+    document.getElementById("response").value = q.responses;
+    document.getElementById("context").value = q.context_set || "";
+  }
+
+  function clearForm() {
+    document.getElementById("edit-id").value = "";
+    document.getElementById("tag").value = "";
+    document.getElementById("pattern").value = "";
+    document.getElementById("response").value = "";
+    document.getElementById("context").value = "";
+  }
+
+  function saveQuestion() {
+    const id = parseInt(document.getElementById("edit-id").value.trim());
+    const tag = document.getElementById("tag").value.trim();
+    const pattern = document.getElementById("pattern").value.trim();
+    const response = document.getElementById("response").value.trim();
+    const context = document.getElementById("context").value.trim();
+
+    if (!tag || !pattern || !response) {
+      alert("Please fill in Tag, Pattern, and Response.");
+      return;
+    }
+
+    const payload = { tag, pattern, responses: response, context_set: context };
+
+    if (!isNaN(id)) {
+      // Update existing question
+      const index = questions.findIndex(q => q.id === id);
+      if (index > -1) {
+        questions[index] = { ...questions[index], ...payload };
+        alert("✅ Updated!");
+      }
+    } else {
+      // Create new (temp ID until submit)
+      const newId = questions.length > 0 ? Math.max(...questions.map(q => q.id)) + 1 : 1;
+      questions.push({ id: newId, ...payload });
+      alert("✅ Added!");
+    }
+
+    renderTable(); // Re-render table only
+    clearForm();
+  }
+
+  function deleteQuestion(id) {
+    if (!confirm("Delete this question?")) return;
+    questions = questions.filter(q => q.id != id);
+    renderTable();
+  }
+
+  async function submitAll() {
+    const payload = questions.map(q => ({
+      id: q.id,
+      tag: q.tag,
+      pattern: q.pattern,
+      responses: q.responses,
+      context_set: q.context_set
+    }));
+
+    const res = await fetch('http://localhost:5000/api/questions/bulk', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (res.ok) {
+      alert("✅ All changes submitted!");
+    } else {
+      alert("❌ Error submitting changes.");
+    }
+  }
+
+  loadQuestions();
+</script>
+
+</body>
+</html>
