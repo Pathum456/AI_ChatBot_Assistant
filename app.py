@@ -145,6 +145,26 @@ def get_question(id):
     result = cursor.fetchone()
     return jsonify(result) if result else ('', 404)
 
+@app.route('/api/questions/<int:id>', methods=['DELETE'])
+def delete_question(id):
+    try:
+        # Execute DELETE query
+        cursor.execute("DELETE FROM chat_history WHERE id = %s", (id,))
+        db.commit()
+
+        # Return success response
+        return jsonify({
+            "status": "success",
+            "message": f"Question with ID {id} deleted successfully."
+        }), 200
+
+    except Exception as e:
+        db.rollback()
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 500
+    
 @app.route('/api/questions', methods=['POST'])
 def add_or_update_question():
     data = request.get_json()
@@ -173,23 +193,47 @@ def add_or_update_question():
 @app.route('/api/questions/bulk', methods=['POST'])
 def bulk_update_questions():
     data = request.get_json()
-    for item in data:
-        sql = """
-        UPDATE chat_history SET tag=%s, pattern=%s, responses=%s, context_set=%s
-        WHERE id=%s
-        """
-        cursor.execute(sql, (
-            item['tag'], item['pattern'], item['responses'],
-            item.get('context_set'), item['id']
-        ))
-    db.commit()
-    return jsonify({"status": "bulk updated"})
 
-@app.route('/api/questions/<int:id>', methods=['DELETE'])
-def delete_question(id):
-    cursor.execute("DELETE FROM chat_history WHERE id = %s", (id,))
+    for item in data:
+        # Check if question with this ID already exists in DB
+        cursor.execute("SELECT id FROM chat_history WHERE id = %s", (item['id'],))
+        result = cursor.fetchone()
+
+        if result:
+            # ID exists → Update
+            sql = """
+                UPDATE chat_history SET tag=%s, pattern=%s, responses=%s, context_set=%s
+                WHERE id=%s
+            """
+            cursor.execute(sql, (
+                item['tag'],
+                item['pattern'],
+                item['responses'],
+                item.get('context_set'),
+                item['id']
+            ))
+        else:
+            # ID does not exist → Insert new row
+            sql = """
+                INSERT INTO chat_history (id, tag, pattern, responses, context_set)
+                VALUES (%s, %s, %s, %s, %s)
+            """
+            cursor.execute(sql, (
+                item['id'],
+                item['tag'],
+                item['pattern'],
+                item['responses'],
+                item.get('context_set')
+            ))
+
     db.commit()
-    return jsonify({"status": "deleted"})
+    return jsonify({"status": "success", "message": "Bulk upsert completed"})
+
+# @app.route('/api/questions/<int:id>', methods=['DELETE'])
+# def delete_question(id):
+#     cursor.execute("DELETE FROM chat_history WHERE id = %s", (id,))
+#     db.commit()
+#     return jsonify({"status": "deleted"})
 
 # Start scheduled tasks when app starts
 if __name__ == '__main__':

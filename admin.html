@@ -274,11 +274,31 @@
     clearForm();
   }
 
-  function deleteQuestion(id) {
-    if (!confirm("Delete this question?")) return;
-    questions = questions.filter(q => q.id != id);
-    renderTable();
+  async function deleteQuestion(id) {
+  if (!confirm("Delete this question?")) return;
+
+  const index = questions.findIndex(q => q.id === id);
+
+  if (index > -1 && questions[index].hasOwnProperty('id')) {
+    // If it's a saved question (has ID), send DELETE request
+    const res = await fetch(`http://localhost:5000/api/questions/${id}`, {
+      method: 'DELETE'
+    });
+
+    if (!res.ok) {
+      alert("❌ Failed to delete from server");
+      return;
+    }
+
+    // Remove from local list after successful deletion
+    questions.splice(index, 1);
+  } else {
+    // If no ID (e.g., new unsaved question), just remove from array
+    questions = questions.filter(q => q.id !== id);
   }
+
+  renderTable();
+}
 
   async function submitAll() {
     const payload = questions.map(q => ({
