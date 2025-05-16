@@ -181,13 +181,13 @@ def export_intents_from_db():
 
     print(f"[{datetime.now()}] Export complete. Total intents now: {len(final_data['intents'])}")
 
-    try:
-        print("[INFO] Running training script (train.py)...")
-        result = subprocess.run(['python', 'train.py'], check=True, capture_output=True, text=True)
-        print("[INFO] Training completed successfully.")
-        print(result.stdout)
-    except subprocess.CalledProcessError as e:
-        print(f"[ERROR] Training script failed:\n{e.stderr}")
+    # try:
+    #     print("[INFO] Running training script (train.py)...")
+    #     result = subprocess.run(['python', 'train.py'], check=True, capture_output=True, text=True)
+    #     print("[INFO] Training completed successfully.")
+    #     print(result.stdout)
+    # except subprocess.CalledProcessError as e:
+    #     print(f"[ERROR] Training script failed:\n{e.stderr}")
 
 @app.route('/chat', methods=['POST'])
 def chat():
@@ -256,7 +256,8 @@ def train_model():
 def schedule_training():
     print("Scheduling training task...")
     scheduler = BackgroundScheduler()
-    scheduler.add_job(export_intents_from_db, 'cron', hour=11, minute=55)  # Run daily at 11:30 AM
+    scheduler.add_job(export_intents_from_db, 'cron', hour=12, minute=32)  # Run daily at 11:30 AM
+    scheduler.add_job(train_model, 'cron', hour=12, minute=33)  # Run daily at 11:30 AM
     scheduler.start()
     atexit.register(lambda: scheduler.shutdown())
 
