@@ -10,6 +10,10 @@ from model import NeuralNet
 from apscheduler.schedulers.background import BackgroundScheduler
 import subprocess
 import atexit
+from datetime import datetime, timedelta
+import json
+import os
+import subprocess
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -61,8 +65,130 @@ preprocessor = Preprocessor()
 with open(r'D:\Esoft\AI\ChatBot\intents.json', 'r') as f:
     intents = json.load(f)
 
+INTENTS_PATH = './assets/intents.json'
 
-@app.route('/chat', methods=['POST'])
+def export_intents_from_db():
+    print(f"[{datetime.now()}] Starting scheduled export...")
+
+    # Load existing intents
+    if os.path.exists(INTENTS_PATH):
+        with open(INTENTS_PATH, 'r', encoding='utf-8') as f:
+            try:
+                existing_data = json.load(f)
+                intents = existing_data.get('intents', [])
+            except json.JSONDecodeError:
+                print("[ERROR] Couldn't parse existing intents.json — starting fresh.")
+                intents = []
+    else:
+        intents = []
+
+    intent_map = {intent['tag']: intent for intent in intents}
+    newly_added_tags = []
+    updated_tags = []
+    skipped_rows = []
+
+    # Today's date
+    today_str = datetime.now().date().isoformat()
+
+    # Fetch today's chat_history rows
+    cursor.execute("SELECT * FROM chat_history WHERE DATE(timestamp) = CURDATE()")
+    rows = cursor.fetchall()
+
+    print(f"[INFO] Fetched {len(rows)} rows from chat_history for today's date:")
+
+    for i, row in enumerate(rows, start=1):
+        print(f"  [{i}] {row}")
+
+    # Filter valid rows, skip if response is null/[]/empty
+    valid_rows = []
+    for row in rows:
+        response = row.get('responses')
+        tag = row.get('tag')
+        pattern = row.get('pattern')
+
+        if not response or response.strip() == '' or response.strip() == '[]':
+            skipped_rows.append(row)
+            # Update timestamp to tomorrow
+            tomorrow = datetime.now() + timedelta(days=1)
+            cursor.execute("UPDATE chat_history SET timestamp = %s WHERE id = %s", (tomorrow, row['id']))
+            db.commit()
+        else:
+            valid_rows.append(row)
+
+    # Build/merge intents
+    for row in valid_rows:
+        tag = row.get('tag')
+        pattern = row.get('pattern')
+        response = row.get('responses')
+        context_set = row.get('context_set')
+
+        if not tag or not pattern or not response:
+            continue
+
+        if tag not in intent_map:
+            new_intent = {
+                "tag": tag,
+                "patterns": [pattern],
+                "responses": [response],
+                "context_set": context_set
+            }
+            intent_map[tag] = new_intent
+            newly_added_tags.append(tag)
+        else:
+            # Update existing
+            updated = False
+            intent = intent_map[tag]
+
+            if pattern not in intent['patterns']:
+                intent['patterns'].append(pattern)
+                updated = True
+
+            if response not in intent['responses']:
+                intent['responses'].append(response)
+                updated = True
+
+            if context_set and intent.get('context_set') != context_set:
+                intent['context_set'] = context_set
+                updated = True
+
+            if updated and tag not in updated_tags:
+                updated_tags.append(tag)
+
+    # Final output
+    final_data = {
+        "intents": list(intent_map.values())
+    }
+
+    # Save to intents.json
+    with open(INTENTS_PATH, 'w', encoding='utf-8') as f:
+        json.dump(final_data, f, indent=4, ensure_ascii=False)
+
+    # Print summary
+    if newly_added_tags:
+        print(f"[INFO] New intents added: {', '.join(newly_added_tags)}")
+    else:
+        print("[INFO] No new intents added today.")
+
+    if updated_tags:
+        print(f"[INFO] Updated existing intents: {', '.join(updated_tags)}")
+    else:
+        print("[INFO] No existing intents were updated.")
+
+    if skipped_rows:
+        print(f"[INFO] Skipped {len(skipped_rows)} rows due to empty/null/[] responses and updated their timestamp to tomorrow.")
+        for row in skipped_rows:
+            print(f"  - Skipped ID {row['id']} (tag: {row['tag']}, response: {row['responses']})")
+
+    print(f"[{datetime.now()}] Export complete. Total intents now: {len(final_data['intents'])}")
+
+    try:
+        print("[INFO] Running training script (train.py)...")
+        result = subprocess.run(['python', 'train.py'], check=True, capture_output=True, text=True)
+        print("[INFO] Training completed successfully.")
+        print(result.stdout)
+    except subprocess.CalledProcessError as e:
+        print(f"[ERROR] Training script failed:\n{e.stderr}")
+
 @app.route('/chat', methods=['POST'])
 def chat():
     try:
@@ -130,7 +256,7 @@ def train_model():
 def schedule_training():
     print("Scheduling training task...")
     scheduler = BackgroundScheduler()
-    scheduler.add_job(train_model, 'cron', hour=12, minute=30)  # Run daily at 12:30 AM
+    scheduler.add_job(export_intents_from_db, 'cron', hour=11, minute=55)  # Run daily at 11:30 AM
     scheduler.start()
     atexit.register(lambda: scheduler.shutdown())
 
